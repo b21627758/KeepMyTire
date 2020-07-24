@@ -6,10 +6,10 @@ from core import models
 
 class UserAdmin(BaseUserAdmin):
     ordering = ['id']
-    list_display = ['email', 'name']
+    list_display = ['email', 'F_name', 'L_name', 'P_num']
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        (_('Personal Info'), {'fields': ('First Name', 'Last Name',)}),
+        (_('Personal Info'), {'fields': ('F_name', 'L_name', 'P_num')}),
         (
             _('Permissions'),
             {
