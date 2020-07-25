@@ -1,7 +1,6 @@
 import uuid
 import os
 
-from django.core.validators import RegexValidator
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
     PermissionsMixin
@@ -21,31 +20,41 @@ class UserManager(BaseUserManager):
 
         return user
 
-    def create_superuser(self, email, password):
+    def create_superuser(self, email, password, **extra):
         """Create and save superuser"""
-        user = self.create_user(email, password)
+        user = self.create_user(email, password, **extra)
         user.is_staff = True
         user.is_superuser = True
         user.save(using=self.db)
 
         return user
 
-    def register(self, email, password):
+    def register(self, email, password, **extra):
         """Register only create active user with mandatory password"""
         if not password:
             raise ValueError
-        user = self.create_user(email, password)
+        user = self.create_user(email, password, **extra)
+
+        return user
+
+    def create_customer(self, email, **extra):
+        """Create customer without password, inactive user (just record)"""
+        user = self.create_user(email, **extra)
+        user.is_active = False
+        user.save(using=self.db)
+
+        return user
 
 
 class User(AbstractBaseUser, PermissionsMixin):
     """Custom user model that supports email instead of username"""
     email = models.EmailField(max_length=255, unique=True)
-    F_name = models.CharField(max_length=255)
-    L_name = models.CharField(max_length=255)
-    DoB = models.DateField()
-    P_num = PhoneField(blank=True, help_text='Contact Phone Number')
+    first_name = models.CharField(max_length=255, blank=True)
+    last_name = models.CharField(max_length=255, blank=True)
+    date_of_birth = models.DateField(blank=True, null=True)
+    phone_num = PhoneField(blank=True, help_text='Contact Phone Number')
     is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
 
     objects = UserManager()
 
