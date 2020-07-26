@@ -82,6 +82,24 @@ class PublicApiTest(TestCase):
         ).exists()
         self.assertFalse(user_exists)
 
+    def test_create_customer(self):
+        """Test creating customer"""
+        payload = {
+            'email': 'test@test.com',
+            'first_name': 'Test',
+            'last_name': 'Testoglu',
+            'date_of_birth': '2019-12-21',
+            'phone_num': '+905093456789'
+        }
+        res = self.client.post(CREATE_CUSTOMER_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        user = get_user_model().objects.get(**res.data)
+        self.assertEqual(user.email, payload['email'])
+        self.assertFalse(user.has_usable_password())
+        self.assertFalse(user.is_active)
+        self.assertNotIn('password', res.data)
+
     def test_create_user_from_customer(self):
         """Test create user from already existent customer record"""
         payload = {
@@ -92,7 +110,7 @@ class PublicApiTest(TestCase):
             'phone_num': '+905093456789'
         }
 
-        create_customer(**payload)
+        customer = create_customer(**payload)
 
         payload['password'] = 'TEst123445546'
 
