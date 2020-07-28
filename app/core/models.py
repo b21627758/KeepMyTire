@@ -16,7 +16,7 @@ class UserManager(BaseUserManager):
             raise ValueError('User must have an email address')
         user = self.model(email=self.normalize_email(email), **extra_fields)
         user.set_password(password)
-        user.save(using=self.db)
+        user.save()
 
         return user
 
@@ -41,7 +41,7 @@ class UserManager(BaseUserManager):
         """Create customer without password, inactive user (just record)"""
         user = self.create_user(email, **extra)
         user.is_active = False
-        user.save(using=self.db)
+        user.save()
 
         return user
 

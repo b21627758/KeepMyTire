@@ -15,6 +15,11 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Create user with registration"""
+
+        print("TEST")
+
+        if get_user_model().objects.filter(email=validated_data['email']).exists():
+            return get_user_model().objects.patch(**validated_data)
         return get_user_model().objects.register(**validated_data)
 
     def update(self, instance, validated_data):
@@ -40,10 +45,6 @@ class CustomerSerializer(UserSerializer):
 
     def create(self, validated_data):
         """Create for customer"""
-        #print(get_user_model().objects.all())
-        if get_user_model().objects.filter(email=validated_data['email']).exists():
-            print("YES")
-            return get_user_model().objects.patch(**validated_data)
         return get_user_model().objects.create_customer(**validated_data)
 
 
