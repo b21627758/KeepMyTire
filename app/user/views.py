@@ -1,5 +1,5 @@
 import os
-
+from django.contrib import messages
 from django.views.generic import FormView
 from rest_framework import generics
 from django.http import HttpResponse
@@ -8,7 +8,7 @@ from core.models import models
 from django.contrib.auth import get_user_model
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
-from core.forms import register_form
+from core.forms import register_form, login_form
 from core import models
 
 
@@ -17,24 +17,28 @@ from core import models
 class RegisterView(FormView):
     """Create a new user in the system"""
     # serializer_class = UserSerializer
-    form_class = register_form
+    form_class = register_form.Register
     model = models.User
-    template_name = 'register_form.html'
+    template_name = 'register.html'
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name)
 
     def post(self, request, *args, **kwargs):
-        comein = request.POST
-        new_user = models.User()
-        new_user.email = comein.get('email')
-        new_user.first_name = comein.get('first_name')
-        new_user.last_name = comein.get('last_name')
-        new_user.phone_num = comein.get('phone_num')
-        new_user.date_of_birth = comein.get('date_of_birth')
-        new_user.save()
-        return redirect('index')
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('index')
+        else:
+            return render(request, self.template_name, {'form': form})
 
+
+
+
+class LoginView(View):
+    """Login page view"""
+    form_class = login_form
+    template_name = 'register.html'
 
 
 class CreateCustomerView(View):
