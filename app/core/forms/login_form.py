@@ -1,7 +1,6 @@
 from django import forms
-from core.models import User
 
 
-class Register(forms.Form):
+class Login(forms.Form):
     email = forms.EmailField()
-    password = forms.PasswordInput
+    password = forms.PasswordInput()
