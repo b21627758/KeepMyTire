@@ -1,14 +1,18 @@
 import os
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.utils.decorators import method_decorator
 from django.views.generic import FormView
 from rest_framework import generics
 from django.http import HttpResponse
 from django.views import View
 from core.models import models
 from django.contrib.auth import get_user_model, authenticate, login, logout
+from core.backends import EmailBackend
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
-from core.forms import register_form, login_form
+from core.forms import register_form, login_form, customer_form
 from core import models
 from django.utils import datetime_safe
 
@@ -28,8 +32,15 @@ class RegisterView(FormView):
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('index')
+            try:
+                user = get_user_model().objects.get(email=form.cleaned_data['email'])
+            except get_user_model().DoesNotExist:
+                form.save()
+                return redirect('index')
+            user.set_password(form.cleaned_data['password'])
+            user.is_active = True
+            user.save()
+
         else:
             return render(request, self.template_name, {'form': form})
 
@@ -44,19 +55,59 @@ class LoginView(View):
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
-        user = authenticate(request, email=form.email, password=form.password)
-        if user is not None:
-            user.last_login = datetime_safe.datetime.now()
-            user.save()
-            login(request, user)
-            return redirect('index')
+        if form.is_valid():
+            user = EmailBackend.authenticate(request, username=form.cleaned_data['email'],
+                                             password=form.cleaned_data['password'])
+            if user is not None:
+                user.last_login = datetime_safe.datetime.now()
+                user.save()
+                login(request, user)
+                return redirect('index')
+            else:
+                form.add_error('email', 'Not Valid Email Or Password')
+                return render(request, self.template_name, {'form': form})
         else:
+            form.add_error('email', 'Not Valid Email Or Password')
             return render(request, self.template_name, {'form': form})
 
 
-class CreateCustomerView(View):
+class LogOutView(View):
+
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        logout(request)
+        return redirect('index')
+
+
+class CreateCustomerView(UserPassesTestMixin, View):
     """Create a new customer in the system"""
-    # serializer_class = CustomerSerializer
+    form_class = customer_form.CreateCustomerForm
+    template_name = 'create_customer_form.html'
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+        return render(request, self.template_name, {'form': form})
+
+    @method_decorator(login_required)
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            try:
+                user = get_user_model().objects.get(email=form.cleaned_data['email'])
+            except get_user_model().DoesNotExist:
+                form.save()
+                user = get_user_model().objects.get(email=form.cleaned_data['email'])
+                user.is_active = False
+                user.save()
+                return redirect('index')
+            return render(request, self.template_name, {'form': form})
+
+        else:
+            return render(request, self.template_name, {'form': form})
 
 
 class CreateStaffView(View):

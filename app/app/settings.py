@@ -122,3 +122,7 @@ USE_TZ = True
 STATIC_URL = '/app/core/static/'
 
 AUTH_USER_MODEL = 'core.User'
+
+AUTHENTICATION_BACKENDS = (
+    'core.backends.EmailBackend',
+)

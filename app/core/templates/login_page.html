@@ -31,12 +31,6 @@
             integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
             crossorigin="anonymous"></script>
      <script type="text/javascript">
-
-        function checkPassword(str) {
-            var re = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-            return re.test(str);
-        }
-
         function checkForm(form) {
             if (form.email.value === "") {
                 alert("Error: Email cannot be blank!");
@@ -71,7 +65,7 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label for="password">Password</label>
-                            <input type="password" class="form-control form-control-lg" id="password" name="password">
+                            <input type="text" class="form-control form-control-lg" id="password" name="password">
                         </div>
                     </div>
                         {{ form.errors }}
