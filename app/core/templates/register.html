@@ -118,6 +118,7 @@
                 <h2 class="title" style="color: #000000">Registration</h2>
                 <form method="POST" onsubmit="return checkForm(this)">
                     {% csrf_token %}
+                    {{ form.errors }}
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="email">Email</label>

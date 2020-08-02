@@ -113,3 +113,27 @@ class CreateCustomerView(UserPassesTestMixin, View):
 class CreateStaffView(View):
     """Create a new staff in the system"""
     # serializer_class = StaffSerializer
+
+
+class ListCustomerView(UserPassesTestMixin, View):
+    """List existing customers"""
+
+    template_name = 'list_customer.html'
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        customers = get_user_model().objects.filter(is_staff=False)
+        return render(request, self.template_name, {'context': customers})
+
+    @method_decorator(login_required)
+    def post(self, request, *args, **kwargs):
+        try:
+            user = get_user_model().objects.get(email=request.POST.get('context', None))
+            user.delete()
+        except get_user_model().DoesNotExist:
+            messages.error(request, "User does not exist")
+            return render(request, self.template_name)
+        messages.success(request, "The user is deleted")
