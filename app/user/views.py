@@ -103,7 +103,7 @@ class CreateCustomerView(UserPassesTestMixin, View):
                 user = get_user_model().objects.get(email=form.cleaned_data['email'])
                 user.is_active = False
                 user.save()
-                return redirect('index')
+                return redirect('list-customer')
             return render(request, self.template_name, {'form': form})
 
         else:
@@ -137,3 +137,11 @@ class ListCustomerView(UserPassesTestMixin, View):
             messages.error(request, "User does not exist")
             return render(request, self.template_name)
         messages.success(request, "The user is deleted")
+        return render(request, self.template_name, {})
+
+
+class CustomerDetailView(UserPassesTestMixin,View):
+    """Detailed Customer"""
+
+    def test_func(self):
+        return self.request.user.is_staff

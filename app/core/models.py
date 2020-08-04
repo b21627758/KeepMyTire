@@ -4,8 +4,6 @@ import os
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
     PermissionsMixin
-from phone_field import PhoneField
-from django.conf import settings
 
 
 class UserManager(BaseUserManager):
@@ -29,22 +27,6 @@ class UserManager(BaseUserManager):
 
         return user
 
-    def register(self, email, password, **extra):
-        """Register only create active user with mandatory password"""
-        if not password:
-            raise ValueError
-        user = self.create_user(email, password, **extra)
-
-        return user
-
-    def create_customer(self, email, **extra):
-        """Create customer without password, inactive user (just record)"""
-        user = self.create_user(email, **extra)
-        user.is_active = False
-        user.save()
-
-        return user
-
 
 class User(AbstractBaseUser, PermissionsMixin, models.Model):
     """Custom user model that supports email instead of username"""
@@ -59,3 +41,38 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
+
+
+class Car(models.Model):
+    """Car model"""
+    plate = models.CharField(max_length=10, unique=True)
+    brand = models.CharField(max_length=100)
+    color = models.CharField(max_length=100, blank=True)
+    model = models.CharField(max_length=100, blank=True)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
+class Tire(models.Model):
+    """Tire model"""
+    brand = models.CharField(max_length=100, blank=True)
+    model = models.CharField(max_length=100)
+    size = models.IntegerField()  # size types 14-22--> 0,1,2,3,4,5,6,7,8
+    usage = models.IntegerField()  # summer-winter-snow-multipurpose--> 0,1,2,3
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
+class TireOnCar(models.Model):
+    """Intermediate entity between tire and car"""
+    car = models.ForeignKey(Car, on_delete=models.CASCADE)
+    tire = models.ForeignKey(Tire, on_delete=models.CASCADE)
+
+
+class NewTire(models.Model):
+    """New Tire entity"""
+    brand = models.CharField(max_length=100)
+    model = models.CharField(max_length=100)
+    size = models.IntegerField()  # size types 14-22--> 0,1,2,3,4,5,6,7,8
+    usage = models.IntegerField()  # summer-winter-snow-multipurpose--> 0,1,2,3
+    p_num = models.IntegerField()
+    price = models.FloatField()
+    m_date = models.DateField()

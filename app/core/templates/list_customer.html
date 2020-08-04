@@ -29,11 +29,11 @@
     });
     function getCSRFToken() {
     var cookieValue = null;
-    if (document.cookie && document.cookie != '') {
+    if (document.cookie && document.cookie !== '') {
         var cookies = document.cookie.split(';');
         for (var i = 0; i < cookies.length; i++) {
             var cookie = jQuery.trim(cookies[i]);
-            if (cookie.substring(0, 10) == ('csrftoken' + '=')) {
+            if (cookie.substring(0, 10) === ('csrftoken' + '=')) {
                 cookieValue = decodeURIComponent(cookie.substring(10));
                 break;
             }
@@ -57,18 +57,39 @@
             }
         }
     });
-       var cells = $(this).closest("tr")[0];
+       var row = $(this).closest("tr")[0];
         $.ajax({
           type: 'POST',
           url: window.location,
           data: {
-             'context': cells[3].innerHTML
+             'context': row.cells[3].innerHTML.split("\n")[0]
           },
-            dataType: 'json',
+            dataType: 'text',
         success: function (res, status) {
-            alert(res);
-            alert(status);
+            location.reload()
         },
+        error: function (res) {
+            alert(res.status);
+        }
+        });
+    });
+    $(document).on("click", ".info", function(){
+         $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            // if not safe, set csrftoken
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+       var row = $(this).closest("tr")[0];
+        $.ajax({
+          type: 'GET',
+          url: '/customer-detail',
+          data: {
+             'context': row.cells[3].innerHTML.split("\n")[0]
+          },
+            dataType: 'text',
         error: function (res) {
             alert(res.status);
         }
@@ -98,14 +119,16 @@
       <td  style="text-align: center">{{ user.first_name }}</td>
       <td  style="text-align: center">{{ user.last_name }}</td>
       <td  style="text-align: center">{{ user.phone_num }}</td>
-      <td  style="text-align: center" >{{ user.email }}</td>
+      <td  style="text-align: center" >{{ user.email }}
+      </td>
     {% if user.is_active %}
         <td style="text-align: center"><i class="fas fa-check-circle fa-2x" style="color: #20ea19"></i></td>
     {% else %}
         <td style="text-align: center"><i class="fas fa-times-circle fa-2x" style="color: #ea0005"></i></td>
     {% endif %}
         <td style="text-align: center">
-        <a class="delete" title="Delete" data-toggle="tooltip"><i class="far fa-trash-alt"></i></a>
+        <a class="delete" title="Delete" data-toggle="tooltip"><i class="far fa-trash-alt fa-2x"></i></a>
+        <a class="info" title="Info" data-toggle="tooltip" style="margin-left: 20px"><i class="fas fa-info-circle fa-2x"></i></a>
       </td>
     </tr>
   {% endfor %}
@@ -125,6 +148,7 @@
         <th  style="text-align: center">Actions
       </th>
     </tr>
+  {{ errors }}
   </tfoot>
 </table>
 {% endblock body %}

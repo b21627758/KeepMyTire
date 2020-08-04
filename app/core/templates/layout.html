@@ -25,21 +25,29 @@
                         Manage Customer
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="create-customer">Add Customer</a>
-                        <a class="dropdown-item" href="list-customer">List Customers</a>
+                        <a class="dropdown-item" href="{% url 'create-customer' %}">Add Customer</a>
+                        <a class="dropdown-item" href="{% url 'list-customer' %}">List Customers</a>
                     </div>
                 </li>
                 {% endif %}
-                <li class="nav-item"><a class="nav-link" href="#">Welcome</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Services</a></li>
+                <li  class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Manage Tire
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="{% url 'create-tire' %}">Add Customer Tire</a>
+                        <a class="dropdown-item" href="{% url 'list-customer' %}">List Customer Tires</a>
+                    </div>
+                </li>
+                 <li class="nav-item"><a class="nav-link" href="#">Welcome</a></li>
                 {% if user.is_superuser %}
-                <li class="nav-item"><a class="nav-link" href="admin">Administration</a></li>
+                <li class="nav-item"><a class="nav-link" href="/admin">Administration</a></li>
                 {% endif %}
             </ul>
             <ul class="navbar-nav ml-auto">
                 {% if user.is_authenticated %}
                     <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-user-circle"></i>Profile</a></li>
-                      <li><a class="nav-link" href="logout"><i class="fas fa-sign-out-alt"></i>Log Out</a></li>
+                      <li><a class="nav-link" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i>Log Out</a></li>
                 </li>
                 {% else %}
                 </li>
@@ -49,8 +57,8 @@
                         Login / Sign Up
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="login">Login</a>
-                        <a class="dropdown-item" href="register">Sign Up</a>
+                        <a class="dropdown-item" href="{% url 'login' %}">Login</a>
+                        <a class="dropdown-item" href="{% url 'register' %}">Sign Up</a>
                     </div>
                 </li>
                 {% endif %}
