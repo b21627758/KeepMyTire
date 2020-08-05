@@ -25,6 +25,7 @@ urlpatterns = [
     path('create-customer/', user_views.CreateCustomerView.as_view(), name='create-customer'),
     path('create-staff/', user_views.CreateStaffView.as_view(), name='create-staff'),
     path('list-customer/', user_views.ListCustomerView.as_view(), name='list-customer'),
+    path('customer-detail/', user_views.CustomerDetailView.as_view(), name='customer-detail'),
     path('create-tire/', tire_views.CreateTireView.as_view(), name='create-tire'),
     path('', views.index, name='index'),
     path('login/', user_views.LoginView.as_view(), name='login'),

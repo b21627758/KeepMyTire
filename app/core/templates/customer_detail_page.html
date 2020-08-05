@@ -1,4 +1,33 @@
 {% extends "layout.html" %}
 {% load static %}
 {% block body %}
+    <div class="row">
+        <div class="card" style="width: 100%">
+         <h1 class="card-header bg-dark" style="text-align: center ; color: #c9c9c9;"> {{ customer.first_name }} {{ customer.last_name }}</h1>
+            <div class="card-body" style="text-align: center">
+                <label >Email: </label> {{ customer.email }}
+                {% if customer.is_active %}
+                    <div><label>Birthdate: </label> {{ customer.date_of_birth }}</div>
+                {% endif %}
+                <div><label>Phone Number: </label> {{ customer.phone_num }}</div>
+                <div><footer class="blockquote-footer" style="font-size: small">Customer Activity:
+                {% if customer.is_active %}
+                <td style="text-align: center"><i class="fas fa-check-circle" style="color: #20ea19"></i></td>
+                {% else %}
+                <td style="text-align: center"><i class="fas fa-times-circle " style="color: #ea0005"></i></td>
+                {% endif %}
+                </footer>
+                </div>
+            </div>
+        </div>
+     <div  class="dropdown">
+                    <button class="btn btn-secondary bg-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="font-size: large">
+                        Manage Tire
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a class="dropdown-item" style="background-color: #052638; font-size: large; color: #FFFFFF" href="{% url 'create-tire' %}">Add Customer Tire</a>
+                        <a class="dropdown-item" style="color: #052638; font-size: large" href="{% url 'list-customer' %}">List Customer Tires</a>
+                    </div>
+                </div>
+    </div>
 {% endblock body %}

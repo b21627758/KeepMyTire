@@ -30,15 +30,7 @@
                     </div>
                 </li>
                 {% endif %}
-                <li  class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Manage Tire
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="{% url 'create-tire' %}">Add Customer Tire</a>
-                        <a class="dropdown-item" href="{% url 'list-customer' %}">List Customer Tires</a>
-                    </div>
-                </li>
+
                  <li class="nav-item"><a class="nav-link" href="#">Welcome</a></li>
                 {% if user.is_superuser %}
                 <li class="nav-item"><a class="nav-link" href="/admin">Administration</a></li>

@@ -140,8 +140,15 @@ class ListCustomerView(UserPassesTestMixin, View):
         return render(request, self.template_name, {})
 
 
-class CustomerDetailView(UserPassesTestMixin,View):
+class CustomerDetailView(UserPassesTestMixin, View):
     """Detailed Customer"""
+
+    template_name = 'customer_detail_page.html'
 
     def test_func(self):
         return self.request.user.is_staff
+
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        user = get_user_model().objects.get(id=request.GET['pg'])
+        return render(request, self.template_name, {'customer': user})
