@@ -18,6 +18,14 @@
                 {% endif %}
                 </footer>
                 </div>
+                {% if customer.is_superuser %}
+                     <div><footer class="blockquote-footer" style="font-size: small">Admin</footer> </div>
+                {% elif customer.is_staff %}
+                    <div><footer class="blockquote-footer" style="font-size: small">Staff</footer> </div>
+                {% else%}
+                    <div><footer class="blockquote-footer" style="font-size: small">Customer</footer> </div>
+                {% endif %}
+
             </div>
         </div>
      <div  class="dropdown">

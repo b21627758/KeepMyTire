@@ -31,17 +31,22 @@ class RegisterView(FormView):
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
-        if form.is_valid():
-            try:
-                user = get_user_model().objects.get(email=form.cleaned_data['email'])
-            except get_user_model().DoesNotExist:
-                form.save()
+        try:
+            if form.is_valid():
+                try:
+                    user = get_user_model().objects.get(email=form.cleaned_data['email'])
+                except get_user_model().DoesNotExist:
+                    form.save()
+                    return redirect('index')
+                user.set_password(form.cleaned_data['password1'])
+                user.is_active = True
+                user.date_of_birth = form.cleaned_data['date_of_birth']
+                user.save()
                 return redirect('index')
-            user.set_password(form.cleaned_data['password'])
-            user.is_active = True
-            user.save()
-
-        else:
+            else:
+                return render(request, self.template_name, {'form': form})
+        except ValueError:
+            form.add_error('email', 'Email Already Exists')
             return render(request, self.template_name, {'form': form})
 
 
@@ -110,9 +115,57 @@ class CreateCustomerView(UserPassesTestMixin, View):
             return render(request, self.template_name, {'form': form})
 
 
-class CreateStaffView(View):
+class CreateStaffView(UserPassesTestMixin, View):
     """Create a new staff in the system"""
     # serializer_class = StaffSerializer
+    form_class = customer_form.CreateCustomerForm
+    template_name = 'create_customer_form.html'
+
+    def test_func(self):
+        return self.request.user.is_superuser
+
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        """Display create staff"""
+        form = self.form_class()
+        return render(request, self.template_name, {'form': form})
+
+    @method_decorator(login_required)
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            form.save()
+            user = get_user_model().objects.get(email=form.cleaned_data['email'])
+            user.is_active = False
+            user.is_staff = True
+            user.save()
+            return redirect('list-staff')
+        return render(request, self.template_name, {'form': form})
+
+
+class ListStaffView(View):
+    """List existing staff"""
+
+    template_name = 'list_customer.html'
+
+    def test_func(self):
+        return self.request.user.is_superuser
+
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        customers = get_user_model().objects.filter(is_staff=True, is_superuser=False)
+        return render(request, self.template_name, {'context': customers})
+
+    @method_decorator(login_required)
+    def post(self, request, *args, **kwargs):
+        try:
+            user = get_user_model().objects.get(email=request.POST.get('context', None))
+            user.delete()
+        except get_user_model().DoesNotExist:
+            messages.error(request, "User does not exist")
+            return render(request, self.template_name)
+        messages.success(request, "The user is deleted")
+        return render(request, self.template_name, {})
 
 
 class ListCustomerView(UserPassesTestMixin, View):
@@ -152,3 +205,13 @@ class CustomerDetailView(UserPassesTestMixin, View):
     def get(self, request, *args, **kwargs):
         user = get_user_model().objects.get(id=request.GET['pg'])
         return render(request, self.template_name, {'customer': user})
+
+
+class ProfileView(View):
+    """User Profile Page"""
+
+    template_name = 'profile.html'
+
+    @method_decorator(login_required)
+    def get(self, *args, **kwargs):
+        return render(self.request, self.template_name, {})

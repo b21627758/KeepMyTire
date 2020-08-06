@@ -29,6 +29,9 @@ urlpatterns = [
     path('create-tire/', tire_views.CreateTireView.as_view(), name='create-tire'),
     path('', views.index, name='index'),
     path('login/', user_views.LoginView.as_view(), name='login'),
+    path('profile/', user_views.ProfileView.as_view(), name='profile'),
+    path('create-staff/', user_views.CreateStaffView.as_view(), name='create-staff'),
+    path('list-staff/', user_views.ListStaffView.as_view(), name='list-staff'),
     path('logout/', user_views.LogOutView.as_view(), name='logout'),
     path('register/', user_views.RegisterView.as_view(), name='register'),
 ]
