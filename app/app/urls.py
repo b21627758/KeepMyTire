@@ -18,6 +18,7 @@ from django.urls import path, include
 from core import views
 from tire import views as tire_views
 from user import views as user_views
+from reservation import views as res_views
 
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
@@ -34,4 +35,5 @@ urlpatterns = [
     path('list-staff/', user_views.ListStaffView.as_view(), name='list-staff'),
     path('logout/', user_views.LogOutView.as_view(), name='logout'),
     path('register/', user_views.RegisterView.as_view(), name='register'),
+    path('make-reservation/', res_views.MakeReservationView.as_view(), name='make-reservation')
 ]

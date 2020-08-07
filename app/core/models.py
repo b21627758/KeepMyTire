@@ -77,3 +77,12 @@ class NewTire(models.Model):
     p_num = models.IntegerField()
     price = models.FloatField()
     m_date = models.DateField()
+
+
+class Reservation(models.Model):
+    """Reservation Records"""
+    date = models.DateField()
+    time = models.TimeField()
+    process = models.IntegerField()
+    notify = models.BooleanField()
+    customer = models.ForeignKey(User, on_delete=models.CASCADE)

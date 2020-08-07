@@ -215,3 +215,21 @@ class ProfileView(View):
     @method_decorator(login_required)
     def get(self, *args, **kwargs):
         return render(self.request, self.template_name, {})
+
+
+class MakeReservationSelfView(View):
+    """Make Tire Change Reservation"""
+
+    template_name = 'make_reservation.html'
+
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        pass
+
+
+class MakeReservationToCustomer(View):
+    """Make Tire Change Reservation For Customer"""
+
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        pass

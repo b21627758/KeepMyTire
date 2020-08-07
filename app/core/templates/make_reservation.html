@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% load static %}
+{% block body %}
+       <div class="card">
+        <div class="card-header">
+            <h4 class="mb-0">User Information</h4>
+        </div>
+        <div class="card-body">
+            <form method="POST" class="form" role="form" autocomplete="off">
+                {% csrf_token %}
+                <div class="form-group row">
+                    <label class="col-lg-3 col-form-label form-control-label">Date</label>
+                    <div class="col-lg-9">
+                        <input class="form-control" type="date" name="date">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-lg-3 col-form-label form-control-label">Time</label>
+                    <div class="col-lg-9">
+                        <input class="form-control form-control-time" type="time" name="time">
+                    </div>
+                </div>
+               <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label form-control-label">Operation</label>
+                                    <div class="col-lg-9">
+                                        <select id="tire_size" name="process" class="form-control" size="0">
+                                            <option value=0>Buy, Change And Store Tire</option>
+                                            <option value=1>Change And Store Tire</option>
+                                            <option value=2>Buy And Change Tire</option>
+                                            <option value=3>Just Change Tire</option>
+                                            <option value=4>Rot Balance</option>
+                                            <option value=5>Tire Repair</option>
+                                        </select>
+                                    </div>
+                                </div>
+            </form>
+        </div>
+    </div>
+{% endblock body %}
