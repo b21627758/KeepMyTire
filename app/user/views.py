@@ -12,7 +12,7 @@ from django.contrib.auth import get_user_model, authenticate, login, logout
 from core.backends import EmailBackend
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
-from core.forms import register_form, login_form, customer_form
+from core.forms import register_form, login_form, customer_form, reservation_form
 from core import models
 from django.utils import datetime_safe
 
@@ -217,19 +217,3 @@ class ProfileView(View):
         return render(self.request, self.template_name, {})
 
 
-class MakeReservationSelfView(View):
-    """Make Tire Change Reservation"""
-
-    template_name = 'make_reservation.html'
-
-    @method_decorator(login_required)
-    def get(self, request, *args, **kwargs):
-        pass
-
-
-class MakeReservationToCustomer(View):
-    """Make Tire Change Reservation For Customer"""
-
-    @method_decorator(login_required)
-    def get(self, request, *args, **kwargs):
-        pass

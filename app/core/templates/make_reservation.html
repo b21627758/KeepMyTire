@@ -1,7 +1,19 @@
 {% extends "layout.html" %}
 {% load static %}
 {% block body %}
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
        <div class="card">
+       {% if success %}
+            <div class="alert alert-success" role="alert">
+                Successfully Reserved
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endif %}
         <div class="card-header">
             <h4 class="mb-0">User Information</h4>
         </div>
@@ -11,29 +23,75 @@
                 <div class="form-group row">
                     <label class="col-lg-3 col-form-label form-control-label">Date</label>
                     <div class="col-lg-9">
-                        <input class="form-control" type="date" name="date">
+                       <div class="input-group date" id="datetimepicker4" data-target-input="nearest">
+                            <input type="text" name="date" class="form-control datetimepicker-input" data-target="#datetimepicker4"/>
+                            <div class="input-group-append" data-target="#datetimepicker4" data-toggle="datetimepicker">
+                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+              <div class="form-group row">
+                  <label class="col-lg-3 col-form-label form-control-label">Time</label>
+                  <div class="col-lg-9">
+                        <div class="input-group date" id="datetimepicker3" data-target-input="nearest">
+                            <input type="text" name="time" class="form-control datetimepicker-input" data-target="#datetimepicker3"/>
+                            <div class="input-group-append" data-target="#datetimepicker3" data-toggle="datetimepicker">
+                                <div class="input-group-text"><i class="fa fa-clock-o"></i></div>
+                            </div>
+                        </div>
+                  </div>
+            </div>
+               <div class="form-group row">
+                    <label class="col-lg-3 col-form-label form-control-label">Operation</label>
+                    <div class="col-lg-9">
+                        <select id="process_option" name="process" class="form-control" size="0" >
+                            <option value=0>Buy, Change And Store Tire</option>
+                            <option value=1>Change And Store Tire</option>
+                            <option value=2>Buy And Change Tire</option>
+                            <option value=3>Just Change Tire</option>
+                            <option value=4>Rot Balance</option>
+                            <option value=5>Tire Repair</option>
+                        </select>
+                    </div>
+                </div>
+                   <div class="form-group row">
+                    <label class="col-lg-3 col-form-label form-control-label">Notify</label>
+                    <div class="col-lg-9">
+                            <input type="checkbox" style="border: #a0a0a0 solid; margin-top: 15px" name="notify">
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-lg-3 col-form-label form-control-label">Time</label>
+                    <label class="col-lg-3 col-form-label form-control-label"></label>
                     <div class="col-lg-9">
-                        <input class="form-control form-control-time" type="time" name="time">
+                        <input type="reset" class="btn btn-secondary" style="background-color: #462226" value="Cancel">
+                        <input type="submit" class="btn btn-primary" style="background-color: #595959" value="Save Changes">
                     </div>
                 </div>
-               <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label form-control-label">Operation</label>
-                                    <div class="col-lg-9">
-                                        <select id="tire_size" name="process" class="form-control" size="0">
-                                            <option value=0>Buy, Change And Store Tire</option>
-                                            <option value=1>Change And Store Tire</option>
-                                            <option value=2>Buy And Change Tire</option>
-                                            <option value=3>Just Change Tire</option>
-                                            <option value=4>Rot Balance</option>
-                                            <option value=5>Tire Repair</option>
-                                        </select>
-                                    </div>
-                                </div>
+                {{ form.errors }}
             </form>
         </div>
     </div>
+     <script type="text/javascript">
+            $(function () {
+                $('#datetimepicker3').datetimepicker({
+                    format: 'hh:mm',
+                    enabledHours: [9, 10, 11, 12, 13, 14, 15, 16],
+                    'stepping' : 15,
+                });
+            });
+             $(function () {
+                $('#datetimepicker4').datetimepicker({
+                    format: 'YYYY-MM-DD',
+                    daysOfWeekDisabled: [0, 6],
+                    minDate: moment(),
+                    maxDate: moment()+7*25*60*60*1000,
+                    disabledDates: [
+                        {% for date in disabled_dates %}
+                           "{{ date.date.isoformat }}",
+                        {% endfor %}
+                    ],
+                });
+            });
+        </script>
 {% endblock body %}
