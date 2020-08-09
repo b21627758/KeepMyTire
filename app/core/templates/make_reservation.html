@@ -21,6 +21,16 @@
             <form method="POST" class="form" role="form" autocomplete="off">
                 {% csrf_token %}
                 <div class="form-group row">
+                    <label class="col-lg-3 col-form-label form-control-label">Select Staff</label>
+                    <div class="col-lg-9">
+                        <select id="process_option" name="staff" id="email" class="form-control" size="0" >
+                            {% for staff in disabled_dates.keys %}
+                                <option value={{ staff }}>{{ staff }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
                     <label class="col-lg-3 col-form-label form-control-label">Date</label>
                     <div class="col-lg-9">
                        <div class="input-group date" id="datetimepicker4" data-target-input="nearest">
@@ -81,15 +91,15 @@
                 });
             });
              $(function () {
+                  {% for date in disabled_dates %}
+                           "{{ date.isoformat }}",
+                        {% endfor %}
                 $('#datetimepicker4').datetimepicker({
                     format: 'YYYY-MM-DD',
                     daysOfWeekDisabled: [0, 6],
                     minDate: moment(),
                     maxDate: moment()+7*25*60*60*1000,
                     disabledDates: [
-                        {% for date in disabled_dates %}
-                           "{{ date.date.isoformat }}",
-                        {% endfor %}
                     ],
                 });
             });

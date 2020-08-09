@@ -24,12 +24,17 @@ class MakeReservationView(View):
     model = Reservation
     template_name = 'make_reservation.html'
 
+    @method_decorator(login_required)
     def get(self, requests, *args, **kwargs):
-        staff = get_user_model().objects.filter(is_staff=True) #first get staff then select reervstion to this staff
-        records = Reservation.objects.filter(date__lte=date.today() + timedelta(days=7), date__gte=date.today()).values(
-            'date')
+        staffs = get_user_model().objects.filter(is_staff=True, is_superuser=False)  # first get staff then select reservation to this staff
+        records = {}
+        for staff in staffs:
+            record = Reservation.objects.filter(date__lte=date.today() + timedelta(days=7), date__gte=date.today(),
+                                                staff=staff).values('date')
+            records[str(staff.email)] = record
         return render(requests, self.template_name, {'disabled_dates': records})
 
+    @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
@@ -41,6 +46,8 @@ class MakeReservationView(View):
                                                                     'focus_time': form.cleaned_data['time']})
             reservation = form.save(commit=False)
             reservation.customer = request.user
+            reservation.status = 0
+            reservation.staff = get_user_model().objects.get(email=form.cleaned_data['staff'])
             reservation.save()
             return render(request, self.template_name, {'form': form, 'success': 'true'})
         return render(request, self.template_name, {'form': form, 'success': ''})

@@ -81,8 +81,21 @@ class NewTire(models.Model):
 
 class Reservation(models.Model):
     """Reservation Records"""
+
+    Done = 1
+    Waiting = 0
+    RES_STATUS = (
+        (Done, 'Done'),
+        (Waiting, 'Waiting'),
+    )
+
+    class Meta:
+        unique_together = (('date', 'time', 'staff'),)
+
     date = models.DateField()
     time = models.TimeField()
     process = models.IntegerField()
     notify = models.BooleanField()
-    customer = models.ForeignKey(User, on_delete=models.CASCADE)
+    customer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='customer')
+    staff = models.ForeignKey(User, on_delete=models.CASCADE, related_name='staff')
+    status = models.IntegerField(choices=RES_STATUS, default=0)

@@ -217,3 +217,12 @@ class ProfileView(View):
         return render(self.request, self.template_name, {})
 
 
+class StaffReservationView(View):
+    """Show reserved days and process"""
+
+    template_name = 'show_reservation.html'
+
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        reservations = models.Reservation.objects.filter(staff=request.user, status=0)
+        return render(request, self.template_name, {'reservations': reservations})

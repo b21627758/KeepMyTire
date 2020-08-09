@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% load static %}
+{% block body %}
+     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+     {% if not reservations %}
+         <h2 style="text-align: center">No record found</h2>
+     {% endif %}
+     <div class="card "style="border: solid #ffffff;display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 10px;">
+        {% for rez in reservations %}
+        <div class="w3-container w3-center bg-dark">
+          <h3 style="color: #FFFFFF">{{ rez.customer }}</h3>
+            <h2 style="color: #FFFFFF">{{ rez.date.isoformat }}  {{ rez.time }}</h2>
+          <h5 style="color: #FFFFFF">Operation:
+              {% if rez.process == 0 %}
+                  Buy, Change And Store Tire
+              {% elif rez.process == 1 %}
+                  Change And Store Tire
+              {% elif rez.process == 2 %}
+                  Buy And Change Tire
+              {% elif rez.process == 3 %}
+                  Just Change Tire
+              {% elif rez.process == 4 %}
+                  Rot Balance
+              {% elif rez.process == 5 %}
+                  Tire Repair
+              {% endif %}
+          </h5>
+            <h4 style="color: #FFFFFF">Status:
+                {% if rez.status == 0 %}
+                    Waiting
+                {% elif  rez.status == 1%}
+                    Process Is Done
+                {% endif %}
+            </h4>
+            <form method="post">
+                <input type="hidden" value="1" name="status">
+                <input type="hidden" value="{{ rez.id }}" name="reservation">
+            </form>
+          <button class="w3-button w3-green">Operation Done</button>
+        </div>
+     {% endfor %}
+
+
+
+
+    </div>
+{% endblock body %}

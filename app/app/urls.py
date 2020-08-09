@@ -35,5 +35,6 @@ urlpatterns = [
     path('list-staff/', user_views.ListStaffView.as_view(), name='list-staff'),
     path('logout/', user_views.LogOutView.as_view(), name='logout'),
     path('register/', user_views.RegisterView.as_view(), name='register'),
-    path('make-reservation/', res_views.MakeReservationView.as_view(), name='make-reservation')
+    path('make-reservation/', res_views.MakeReservationView.as_view(), name='make-reservation'),
+    path('show-rez/', user_views.StaffReservationView.as_view(), name='show-rez')
 ]

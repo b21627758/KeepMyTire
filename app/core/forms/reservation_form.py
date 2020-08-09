@@ -14,4 +14,6 @@ class BookingForm(forms.ModelForm):
             'notify'
         }
 
-        exclude = ('customer',)
+        exclude = ('customer', 'staff')
+
+    staff = forms.CharField(max_length=255)
