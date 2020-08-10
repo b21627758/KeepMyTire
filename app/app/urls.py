@@ -36,5 +36,8 @@ urlpatterns = [
     path('logout/', user_views.LogOutView.as_view(), name='logout'),
     path('register/', user_views.RegisterView.as_view(), name='register'),
     path('make-reservation/', res_views.MakeReservationView.as_view(), name='make-reservation'),
-    path('show-rez/', user_views.StaffReservationView.as_view(), name='show-rez')
+    path('show-rez/', user_views.StaffReservationView.as_view(), name='show-rez'),
+    path('list-my-tires/', user_views.CustomerOwnedTireView.as_view(), name='list-my-tires'),
+    path('list-my-rez/', user_views.CustomerReservationView.as_view(), name='list-my-rez'),
+    path('get_cus/', res_views.get_customer, name='get-custom')
 ]

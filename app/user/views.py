@@ -1,4 +1,6 @@
 import os
+from datetime import date, datetime, time
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
@@ -224,5 +226,43 @@ class StaffReservationView(View):
 
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
+        """Show waiting reservations"""
         reservations = models.Reservation.objects.filter(staff=request.user, status=0)
+        return render(request, self.template_name, {'reservations': reservations})
+
+    @method_decorator(login_required)
+    def post(self, request, *args, **kwargs):
+        """Convert reservation to done"""
+        reservation = models.Reservation.objects.get(id=request.POST.get('reservation', None))
+        reservation.status = 1
+        reservation.save()
+        return render(request, self.template_name)
+
+
+class CustomerOwnedTireView(View):
+    """Show owned tires"""
+
+    template_name = 'list_tire.html'
+
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        tires = models.Tire.objects.filter(owner=request.user)
+        return render(request, self.template_name, {'context': tires})
+
+
+class CustomerReservationView(View):
+    """Show reserved days and process"""
+
+    template_name = 'show_reservation.html'
+
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        """Show reservations"""
+        reservations = models.Reservation.objects.filter(customer=request.user).order_by('status')
+        for i in reservations:
+            if i.date < date.today() and i.status == 0:
+                i.status = 3
+            elif i.date == datetime.now().date() and i.time < datetime.now().time() and i.status == 0:
+                i.status = 3
+            i.save()
         return render(request, self.template_name, {'reservations': reservations})

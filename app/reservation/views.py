@@ -17,6 +17,13 @@ from core.models import Reservation
 from datetime import date, timedelta
 
 
+def get_customer(request):
+    reservation = Reservation.objects.filter(staff__email=request.GET.get('context', None),
+                                             date__gte=date.today(),
+                                             date__lte=date.today() + timedelta(days=7)).values('date')
+    return render(request, 'make_reservation.html', {'disabled_dates': reservation})
+
+
 class MakeReservationView(View):
     """Create Reservation View"""
 
@@ -25,14 +32,15 @@ class MakeReservationView(View):
     template_name = 'make_reservation.html'
 
     @method_decorator(login_required)
-    def get(self, requests, *args, **kwargs):
-        staffs = get_user_model().objects.filter(is_staff=True, is_superuser=False)  # first get staff then select reservation to this staff
+    def get(self, request, *args, **kwargs):
+        staffs = get_user_model().objects.filter(is_staff=True,
+                                                 is_superuser=False)  # first get staff then select reservation to this staff
         records = {}
         for staff in staffs:
             record = Reservation.objects.filter(date__lte=date.today() + timedelta(days=7), date__gte=date.today(),
                                                 staff=staff).values('date')
             records[str(staff.email)] = record
-        return render(requests, self.template_name, {'disabled_dates': records})
+        return render(request, self.template_name, {'disabled_dates': records})
 
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):

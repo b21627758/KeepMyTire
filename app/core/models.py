@@ -84,9 +84,11 @@ class Reservation(models.Model):
 
     Done = 1
     Waiting = 0
+    Passed = 3
     RES_STATUS = (
         (Done, 'Done'),
         (Waiting, 'Waiting'),
+        (Passed, 'Passed')
     )
 
     class Meta:

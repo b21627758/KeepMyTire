@@ -26,6 +26,16 @@
                     <div><footer class="blockquote-footer" style="font-size: small">user</footer> </div>
                 {% endif %}
             </div>
+
+            <div  class="dropdown">
+                <button class="btn btn-secondary bg-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="font-size: large">
+                    Manage Tire
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                    <a class="dropdown-item" style="color: #052638; font-size: large" href="{% url 'list-my-tires' %}">List Customer Tires</a>
+                </div>
+            </div>
+
         </div>
     </div>
 {% endblock body %}

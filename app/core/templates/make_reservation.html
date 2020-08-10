@@ -23,7 +23,8 @@
                 <div class="form-group row">
                     <label class="col-lg-3 col-form-label form-control-label">Select Staff</label>
                     <div class="col-lg-9">
-                        <select id="process_option" name="staff" id="email" class="form-control" size="0" >
+                        <select id="process_option" name="staff" id="email" onchange="get_custom(this)" class="form-control" size="0" >
+                            <option value="">Select Staff</option>
                             {% for staff in disabled_dates.keys %}
                                 <option value={{ staff }}>{{ staff }}</option>
                             {% endfor %}
@@ -83,25 +84,79 @@
         </div>
     </div>
      <script type="text/javascript">
-            $(function () {
-                $('#datetimepicker3').datetimepicker({
-                    format: 'hh:mm',
-                    enabledHours: [9, 10, 11, 12, 13, 14, 15, 16],
-                    'stepping' : 15,
-                });
+             $(document).ready(function () {
+            $('#dtBasicExample').DataTable();
+            $('.dataTables_length').addClass('bs-select');
             });
-             $(function () {
-                  {% for date in disabled_dates %}
-                           "{{ date.isoformat }}",
-                        {% endfor %}
-                $('#datetimepicker4').datetimepicker({
-                    format: 'YYYY-MM-DD',
-                    daysOfWeekDisabled: [0, 6],
-                    minDate: moment(),
-                    maxDate: moment()+7*25*60*60*1000,
-                    disabledDates: [
-                    ],
-                });
+            $(document).ready(function () {
+            $('#selectedColumn').DataTable({
+              "aaSorting": [],
+              columnDefs: [{
+              orderable: false,
+              targets: 3
+              }]
             });
+              $('.dataTables_length').addClass('bs-select');
+            });
+            $(document).ready(function () {
+            $('#dtOrderExample').DataTable({
+            "order": [[ 3, "desc" ]]
+            });
+            $('.dataTables_length').addClass('bs-select');
+            });
+            function getCSRFToken() {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    if (cookie.substring(0, 10) === ('csrftoken' + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(10));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+             var csrftoken = getCSRFToken()
+
+            function csrfSafeMethod(method) {
+                // these HTTP methods do not require CSRF protection
+                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+            }
+           function get_custom (selected){
+                var email = selected.value
+                $.ajax({
+                    type: 'GET',
+                    url: {% url 'get-custom' %},
+                    data: {
+                        'context': email
+                    },
+                    dataType: 'text',
+                    success: function (res, status) {
+                        $(function () {
+                            $('#datetimepicker4').datetimepicker({
+                                format: 'YYYY-MM-DD',
+                                daysOfWeekDisabled: [0, 6],
+                                minDate: moment(),
+                                maxDate: moment()+7*25*60*60*1000,
+                                disabledDates: [
+                                    res['disabled_dates']
+                                ],
+                            });
+                        });
+                        $(function () {
+                            $('#datetimepicker3').datetimepicker({
+                                format: 'HH:mm',
+                                enabledHours: [9, 10, 11, 12, 13, 14, 15, 16],
+                                'stepping' : 15,
+                            });
+                        });
+                    },
+                    error: function (res) {
+                        alert(res.status);
+                    }
+                    });
+                }
         </script>
 {% endblock body %}

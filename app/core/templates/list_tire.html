@@ -78,11 +78,16 @@
         {% endif %}
       </td>
         <td style="text-align: center">
+            {% if user.is_staff %}
             <form method="POST">
                 {% csrf_token %}
                 <input type="hidden" id="Tid" name="Tid" value="{{ tire.id }}">
-                <button class="submit" title="Delete" data-toggle="tooltip"><i class="far fa-trash-alt fa-2x"></i></button>
+                <button class="submit bg-dark" style="border-radius: 50px; color: orange;" title="Delete" data-toggle="tooltip"><i class="far fa-trash-alt fa-2x"></i></button>
             </form>
+            {% endif %}
+            {% if not user.is_staff %}
+                <button class="button bg-dark" href="#" style="border-radius: 5px; color: #FFFFFF; border: solid #20ea19 1px">Tire Condition Reports</button>
+            {% endif %}
         </td>
     </tr>
   {% endfor %}
