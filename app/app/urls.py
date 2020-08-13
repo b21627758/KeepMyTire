@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from core import views
+from car import views as car_views
 from tire import views as tire_views
 from user import views as user_views
 from reservation import views as res_views
@@ -39,5 +40,12 @@ urlpatterns = [
     path('show-rez/', user_views.StaffReservationView.as_view(), name='show-rez'),
     path('list-my-tires/', user_views.CustomerOwnedTireView.as_view(), name='list-my-tires'),
     path('list-my-rez/', user_views.CustomerReservationView.as_view(), name='list-my-rez'),
-    path('get_cus/', res_views.get_customer, name='get-custom')
+    path('list-my-cars', user_views.CustomerOwnedCarView.as_view(), name='list-my-cars'),
+    path('get-cus/', res_views.get_customer, name='get-custom'),
+    path('add-car/', car_views.CreateCustomerCarView.as_view(), name='add-car'),
+    path('list-car/', car_views.CustomerCarListView.as_view(), name='list-cars'),
+    path('cond-rep/', res_views.ConditionReportView.as_view(), name='cond-rep'),
+    path('tire-detail/', tire_views.TireDetailView.as_view(), name='tire-detail'),
+    path('last-report/', res_views.LastReportView.as_view(), name='last-report'),
+    path('cs-show/', res_views.ConditionReportShowView.as_view(), name='cs-show')
 ]

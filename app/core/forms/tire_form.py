@@ -11,7 +11,8 @@ class CreateTireForm(forms.ModelForm):
             'brand',
             'model',
             'size',
-            'usage'
+            'usage',
+            'position'
         }
         exclude = ('owner',)
 

@@ -266,3 +266,15 @@ class CustomerReservationView(View):
                 i.status = 3
             i.save()
         return render(request, self.template_name, {'reservations': reservations})
+
+
+class CustomerOwnedCarView(View):
+    """Show owned cars"""
+
+    template_name = 'list_cars.html'
+
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        """List cars"""
+        cars = models.Car.objects.filter(owner=request.user)
+        return render(request, self.template_name, {'context': cars})

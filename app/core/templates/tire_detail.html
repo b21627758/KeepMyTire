@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+{% load static %}
+{% block body %}
+    <div class="row">
+        <div class="card" style="width: 100%">
+         <h1 class="card-header bg-dark" style="text-align: center ; color: #c9c9c9;"> {{ tire.brand }} / {{ tire.model }}</h1>
+            <div class="card-body" style="text-align: center">
+                <label >Size: </label>
+              {% if tire.size == 0 %}
+            14 Inch
+        {% elif tire.size == 1 %}
+          15 Inch
+         {% elif tire.size == 2 %}
+            16 Inch
+         {% elif tire.size == 3 %}
+           17 Inch
+         {% elif tire.size == 4 %}
+         18 Inch
+         {% elif tire.size == 5 %}
+          19 Inch
+         {% elif tire.size == 6 %}
+            20 Inch
+         {% elif tire.size == 7 %}
+          21 Inch
+         {% elif tire.size == 8 %}
+           22 Inch
+        {% endif %}
+                <div><label>Usage: </label>
+                    {% if tire.usage == 0 %}
+            <i class="fas fa-temperature-high fa-2x"></i>
+        {% elif tire.usage == 1 %}
+           <i class="fas fa-temperature-low fa-2x"></i>
+        {% elif tire.usage == 2 %}
+            <i class="fas fa-snowflake fa-2x"></i>
+        {% elif tire.usage == 3 %}
+            <i class="fas fa- globe fa-2x"></i>
+        {% endif %}</div>
+            <div><label>Position: </label>
+                    {% if tire.position == 0 %}
+            Front Right
+        {% elif tire.position == 1 %}
+           Front Left
+        {% elif tire.position == 2 %}
+            Back Right
+        {% elif tire.position == 3 %}
+            Back Left
+        {% endif %}</div>
+                </div>
+            </div>
+        </div>
+                    <button class="btn btn-secondary bg-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="font-size: large">
+                        Condition Reports
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a class="dropdown-item" style="background-color: #052638; font-size: large; color: #FFFFFF" href="{% url 'last-report' %}?pg={{ tire.id }}">Last Report</a>
+                        <a class="dropdown-item" style="color: #052638; font-size: large" href="{% url 'cs-show' %}?pg={{ tire.id }}">Report List</a>
+                    </div>
+{% endblock body %}

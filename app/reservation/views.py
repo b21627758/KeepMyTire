@@ -7,14 +7,16 @@ from django.views.generic import FormView
 from rest_framework import generics
 from django.http import HttpResponse
 from django.views import View
-from core.models import models
+from rest_framework.utils import json
+from django.core import serializers
+from core.models import Tire
 from django.contrib.auth import get_user_model, authenticate, login, logout
 from core.backends import EmailBackend
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
-from core.forms import reservation_form
-from core.models import Reservation
-from datetime import date, timedelta
+from core.forms import reservation_form, condition_report_form
+from core.models import Reservation, ConditionReport, Tire
+from datetime import date, timedelta, datetime
 
 
 def get_customer(request):
@@ -59,3 +61,54 @@ class MakeReservationView(View):
             reservation.save()
             return render(request, self.template_name, {'form': form, 'success': 'true'})
         return render(request, self.template_name, {'form': form, 'success': ''})
+
+
+class ConditionReportView(View):
+    """Condition Report View"""
+
+    template_name = 'condition_report.html'
+    form_class = condition_report_form.CreateConditionReportForm
+
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        """Send Condition Report Form"""
+        rez = Reservation.objects.get(id=request.GET.get('context', None))
+        tires = Tire.objects.filter(owner_id=rez.customer_id)
+        return render(request, self.template_name, {'tires': tires})
+
+    def post(self, request, *args, **kwargs):
+        """Keep Condition Reports"""
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            cr = form.save(commit=False)
+            cr.reporter = request.user
+            cr.date = datetime.today()
+            cr.time = datetime.now().time()
+            cr.save()
+            return redirect('show-rez')
+        return render(request, self.template_name, {'form': form})
+
+
+class LastReportView(View):
+    """Send Last Condition Report"""
+
+    template_name = 'condition_report_show_one.html'
+    model = ConditionReport
+
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        condition_report = self.model.objects.filter(tire_id=request.GET['pg']).order_by('date', 'time').first()
+        rp = get_user_model().objects.get(id=condition_report.reporter.id)
+        return render(request, self.template_name, {'cr': condition_report, 'rp': rp})
+
+
+class ConditionReportShowView(View):
+    """Send report according to tire"""
+
+    template_name = 'condition_report_list.html'
+    model = ConditionReport
+
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        condition_report = self.model.objects.filter(tire_id=request.GET['pg']).order_by('date', 'time')
+        return render(request, self.template_name, {'context': condition_report})

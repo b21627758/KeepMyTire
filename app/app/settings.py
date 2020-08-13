@@ -40,6 +40,9 @@ INSTALLED_APPS = [
     'core',
     'user',
     'reservation',
+    'car',
+    'newTire',
+    'tire',
 ]
 
 MIDDLEWARE = [

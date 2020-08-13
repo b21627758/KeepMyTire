@@ -39,6 +39,8 @@
       </th>
       <th class="th-sm"  style="text-align: center">Usage
       </th>
+        <th  style="text-align: center">Position
+      </th>
          <th class="th-sm"  style="text-align: center">Actions
       </th>
     </tr>
@@ -77,12 +79,22 @@
             <td  style="text-align: center">Multipurpose</td>
         {% endif %}
       </td>
+    {% if  tire.position == 0 %}
+        <td  style="text-align: center">Front Right</td>
+    {% elif tire.position == 1 %}
+        <td  style="text-align: center">Front Left</td>
+    {% elif tire.position == 2 %}
+        <td  style="text-align: center">Back Right</td>
+    {% elif tire.position == 3 %}
+        <td  style="text-align: center">Back Left</td>
+    {% endif %}
         <td style="text-align: center">
             {% if user.is_staff %}
             <form method="POST">
                 {% csrf_token %}
                 <input type="hidden" id="Tid" name="Tid" value="{{ tire.id }}">
                 <button class="submit bg-dark" style="border-radius: 50px; color: orange;" title="Delete" data-toggle="tooltip"><i class="far fa-trash-alt fa-2x"></i></button>
+                 <a class="info" href="{% url 'tire-detail' %}?pg={{tire.id}}" title="Info" data-toggle="tooltip" style="margin-left: 20px"><i class="fas fa-info-circle fa-2x"></i></a>
             </form>
             {% endif %}
             {% if not user.is_staff %}
@@ -101,6 +113,8 @@
       <th  style="text-align: center">Size
       </th>
       <th  style="text-align: center">Usage
+      </th>
+        <th  style="text-align: center">Position
       </th>
         <th  style="text-align: center">Actions
       </th>

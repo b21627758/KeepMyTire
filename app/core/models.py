@@ -45,7 +45,7 @@ class User(AbstractBaseUser, PermissionsMixin, models.Model):
 
 class Car(models.Model):
     """Car model"""
-    plate = models.CharField(max_length=10, unique=True)
+    plate = models.CharField(max_length=11, unique=True)
     brand = models.CharField(max_length=100)
     color = models.CharField(max_length=100, blank=True)
     model = models.CharField(max_length=100, blank=True)
@@ -59,6 +59,7 @@ class Tire(models.Model):
     size = models.IntegerField()  # size types 14-22--> 0,1,2,3,4,5,6,7,8
     usage = models.IntegerField()  # summer-winter-snow-multipurpose--> 0,1,2,3
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    position = models.IntegerField()
 
 
 class TireOnCar(models.Model):
@@ -101,3 +102,16 @@ class Reservation(models.Model):
     customer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='customer')
     staff = models.ForeignKey(User, on_delete=models.CASCADE, related_name='staff')
     status = models.IntegerField(choices=RES_STATUS, default=0)
+
+
+class ConditionReport(models.Model):
+    """Condition Report Records"""
+
+    condition = models.CharField(max_length=500)
+    erl = models.CharField(max_length=5)
+    date = models.DateField()
+    time = models.TimeField()
+    reporter = models.ForeignKey(User, on_delete=models.CASCADE)
+    tire = models.ForeignKey(Tire, on_delete=models.CASCADE)
+
+

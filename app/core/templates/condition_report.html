@@ -1,0 +1,68 @@
+  <div class="card">
+    <div class="card-header">
+    <h4 class="mb-0">Condition Report</h4>
+    </div>
+    <div class="card-body">
+      <form method="POST" class="form" action="{% url 'cond-rep' %}" role="form" autocomplete="off">
+      {% csrf_token %}
+        <div class="form-group row">
+          <label class="col-lg-3 col-form-label form-control-label">Condition</label>
+            <div class="col-lg-9">
+              <input class="form-control" type="text" name="condition">
+            </div>
+        </div>
+          <div class="form-group row">
+           <label class="col-lg-3 col-form-label form-control-label">Estimated Remaining Lifetime</label>
+            <div class="col-lg-9">
+             <select id="user_time_zone" name="erl" class="form-control" size="0">
+                                                <option value=0>Need To Change</option>
+                                                    <option value=1>1.000 KM</option>
+                                                    <option value=1>2.000 KM</option>
+                                                    <option value=1>5.000 KM</option>
+                                                   <option value=1>10.000 KM</option>
+                                                    <option value=2>25.000 KM+</option>
+                                                   <option value=3>Up To 50.000 KM</option>
+                                        </select>
+                                          </div>
+                                      </div>
+                                        <div class="form-group row">
+                                          <label class="col-lg-3 col-form-label form-control-label">Select Tire</label>
+                                          <div class="col-lg-9">
+                                              <select id="user_time_zone" name="tire" class="form-control" size="0">
+                                                   {% for tire in tires %}
+                                                       <option value={{ tire.pk }}>Brand/Model: {{ tire.brand }}/{{ tire.model }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Usage:
+                                                           {% if tire.usage == 0 %}
+                                                               Summer
+                                                           {% elif tire.usage == 1 %}
+                                                               Winter
+                                                           {% elif tire.usage == 2 %}
+                                                               Snow
+                                                           {% elif tire.usage == 3 %}
+                                                               Multipurpose
+                                                           {% endif %}
+                                                           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Position:
+                                                           {% if tire.position == 0 %}
+                                                               Front Right
+                                                            {% elif tire.position == 1 %}
+                                                               Front Left
+                                                            {% elif tire.position == 2 %}
+                                                               Back Right
+                                                            {% elif tire.position == 3 %}
+                                                               Back Left
+                                                            {% endif %}
+                                                       </option>
+                                                   {% endfor %}
+                                              </select>
+                                          </div>
+                                      </div>
+                                       <div class="form-group row">
+                                           <label class="col-lg-3 col-form-label form-control-label"></label>
+                                           <div class="col-lg-9">
+                                               <input type="reset" class="btn btn-secondary" style="background-color: #462226" value="Cancel">
+                                               <input type="submit" class="btn btn-primary" style="background-color: #595959" value="Save Changes">
+                                           </div>
+                                       </div>
+                                   </form>
+                               </div>
+                           </div>
+

@@ -1,11 +1,34 @@
 {% extends "layout.html" %}
 {% load static %}
 {% block body %}
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+    function condition_report(e){
+        $(document).ready(function() {
+            $.ajax({
+                type: 'GET',
+                url: {% url 'cond-rep' %},
+                data: {
+                    'context': e.value
+                },
+                dataType : 'text',
+                success: function (res, status) {
+                   $('#full-card').replaceWith(
+                     res
+                   );
+                },
+                error: function (res) {
+                    alert(res.status);
+                }
+                });
+             });
+    }
+    </script>
      <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
      {% if not reservations %}
          <h2 style="text-align: center">No record found</h2>
      {% endif %}
-     <div class="card "style="border: solid #ffffff;display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 10px;">
+     <div class="card" id="full-card" style="border: solid #ffffff;display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 10px;">
         {% for rez in reservations %}
         <div class="w3-container w3-center bg-dark" style="border-radius: 100px">
           <h3 style="color: #FFFFFF">{{ rez.customer }}</h3>
@@ -34,13 +57,13 @@
                 {% else %}
                     <h4 style="color: gray">Status: Unknown</h4>
                 {% endif %}
-
         {% if user.is_staff %}
             <form method="post">
                 {% csrf_token %}
                 <input type="hidden" value="1" name="status">
                 <input id="reservation" type="hidden" value="{{ rez.id }}" name="reservation">
-                 <button type="submit" id="done" data-toggle="tooltip" class="w3-button w3-green">Operation Done</button>
+                <button type="button" id="condition" data-toggle="tooltip" value="{{ rez.id }}" class="w3-button w3-orange" style="color: #000000; border-radius: 100px;" onclick="condition_report(this)" >Create Condition Report</button>
+                 <button type="submit" id="done" data-toggle="tooltip" class="w3-button w3-green" style="border-radius: 100px;">Operation Done</button>
             </form>
         {% endif %}
         </div>

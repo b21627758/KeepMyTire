@@ -26,10 +26,12 @@ class CreateTireView(UserPassesTestMixin, View):
     def test_func(self):
         return self.request.user.is_staff
 
+    @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         """Render create customer tire"""
         return render(request, self.template_name)
 
+    @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
         """Create tire record for existing tire """
         form = self.form_class(request.POST)
@@ -66,3 +68,16 @@ class ListTireView(UserPassesTestMixin, View):
             return render(request, self.template_name)
         messages.success(request, "The user is deleted")
         return render(request, self.template_name, {'context': models.Tire.objects.filter(owner_id=request.GET['pg'])})
+
+
+class TireDetailView(View):
+    """Detail And Condition Reports"""
+
+    template_name = 'tire_detail.html'
+    model = models.Tire
+
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        tire = self.model.objects.get(id=request.GET['pg'])
+        crs = models.ConditionReport.objects.filter(tire_id=request.GET['pg'])
+        return render(request, self.template_name, {'crs': crs, 'tire': tire})
