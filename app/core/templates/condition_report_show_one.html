@@ -3,6 +3,9 @@
 {% block body %}
     <div class="row">
         <div class="card" style="width: 100%">
+        {% if  failure %}
+            <h1 style="text-align: center">Could Not Found Any Record</h1>
+        {% else %}
          <h1 class="card-header bg-dark" style="text-align: center ; color: #c9c9c9;"> {{ cr.date }} {{ cr.time }}</h1>
             <div class="card-body" style="text-align: center">
                 <label >Condition: </label> {{ cr.condition }}
@@ -26,6 +29,7 @@
                 <div><label>Reporter: </label> {{ rp.first_name }} {{ rp.last_name }}
                 </div>
             </div>
+        {% endif %}
         </div>
     </div>
 {% endblock body %}

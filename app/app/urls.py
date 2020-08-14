@@ -47,5 +47,6 @@ urlpatterns = [
     path('cond-rep/', res_views.ConditionReportView.as_view(), name='cond-rep'),
     path('tire-detail/', tire_views.TireDetailView.as_view(), name='tire-detail'),
     path('last-report/', res_views.LastReportView.as_view(), name='last-report'),
-    path('cs-show/', res_views.ConditionReportShowView.as_view(), name='cs-show')
+    path('cs-show/', res_views.ConditionReportShowView.as_view(), name='cs-show'),
+    path('cs-detail/', res_views.ConditionReportDetailView.as_view(), name='cs-detail')
 ]

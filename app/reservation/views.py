@@ -98,7 +98,10 @@ class LastReportView(View):
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         condition_report = self.model.objects.filter(tire_id=request.GET['pg']).order_by('date', 'time').first()
-        rp = get_user_model().objects.get(id=condition_report.reporter.id)
+        try:
+            rp = get_user_model().objects.get(id=condition_report.reporter.id)
+        except:
+            return render(request, self.template_name, {'failure': True})
         return render(request, self.template_name, {'cr': condition_report, 'rp': rp})
 
 
@@ -112,3 +115,15 @@ class ConditionReportShowView(View):
     def get(self, request, *args, **kwargs):
         condition_report = self.model.objects.filter(tire_id=request.GET['pg']).order_by('date', 'time')
         return render(request, self.template_name, {'context': condition_report})
+
+
+class ConditionReportDetailView(View):
+    """Detailed Condition Report View"""
+
+    model = ConditionReport
+    template_name = 'condition_report_detail.html'
+
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        cr = self.model.objects.get(id=request.GET['pg'])
+        return render(request, self.template_name, {'cr': cr})

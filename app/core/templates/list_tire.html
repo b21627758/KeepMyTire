@@ -98,7 +98,7 @@
             </form>
             {% endif %}
             {% if not user.is_staff %}
-                <button class="button bg-dark" href="#" style="border-radius: 5px; color: #FFFFFF; border: solid #20ea19 1px">Tire Condition Reports</button>
+                <a href="{% url 'tire-detail' %}?pg={{ tire.id }}"><button class="button bg-dark"  style="border-radius: 5px; color: #FFFFFF; border: solid #20ea19 1px">Tire Condition Reports</button></a>
             {% endif %}
         </td>
     </tr>
