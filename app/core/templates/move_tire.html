@@ -1,0 +1,129 @@
+<div class="card">
+    <div class="card-header">
+        <h4 class="mb-0" style="float: left">Move Tire</h4> <h4 class="mb-0" style="float: right">Add More Tire<button id="add" class="btn btn-sm"><i class="far fa-plus-square fa-2x" style="color: green;"></i></button></h4>
+    </div>
+      <div class="card-body">
+      <div class="card-group bg-dark" style="width: fit-content; border: solid 2px darkgray; border-radius: 10px; margin-top: 10px; margin-bottom: 10px;">
+
+           <div class="form-group row" style="margin-top: 10px;">
+           <label class="col-lg-4 col-form-label form-control-label" style="color: #FFFFFF">Vehicle Plate That Tire Moved To</label>
+            <div class="col-lg-6">
+             <select id="mycar" name="car" style="margin-top: 20px;" class="form-control" size="0">
+                <option selected="selected">Please Select Plate Number</option>
+                        {% for i in cars %}
+                        <option value='{{i.plate}}'>{{ i.plate }}</option>
+                        {% endfor %}
+                </select>
+             </div>
+      <p id="contain">
+            <div class="form-group row" id="rw">
+               <div class="col-lg-2" style="margin-left: 5px"><button id="delete" class="btn btn-sm fa-inverse bg-dark" type="button"><i class="fas fa-times fa-2x fa-black-tie"></i></button></div>
+              <label class="col-lg-3 col-form-label form-control-label" style="color: white">Select Tire</label>
+              <div class="col-lg-6">
+                  <select id="mytire" name="tire" class="form-control" size="0">
+                    <option selected="selected">Please Select Tire</option>
+                       {% for tire in tires %}
+                           <option value={{ tire.pk }}>Brand/Model: {{ tire.brand }}/{{ tire.model }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Usage:
+                               {% if tire.usage == 0 %}
+                                   Summer
+                               {% elif tire.usage == 1 %}
+                                   Winter
+                               {% elif tire.usage == 2 %}
+                                   Snow
+                               {% elif tire.usage == 3 %}
+                                   Multipurpose
+                               {% endif %}
+                               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Position:
+                               {% if tire.position == 0 %}
+                                   Front Right
+                                {% elif tire.position == 1 %}
+                                   Front Left
+                                {% elif tire.position == 2 %}
+                                   Back Right
+                                {% elif tire.position == 3 %}
+                                   Back Left
+                                {% endif %}
+                           </option>
+                       {% endfor %}
+                  </select>
+              </div>
+          </div>
+          </div>
+      </p>
+      </div>
+      </div>
+           <div class="form-group row">
+               <label class="col-lg-3 col-form-label form-control-label"></label>
+               <div class="col-lg-9">
+                   <button id="save" class="btn btn-primary" >Save Changes</button>
+                   <a href="{% url 'add-car' %}?pg={{ customer }}" id="add-car" class="btn btn-primary" style="background-color: darkgreen">Add Car</a>
+                   <a href="{% url 'create-tire' %}?pg={{ customer }}" id="add-tire" class="btn btn-primary" style="background-color: yellowgreen">Add Tire</a>
+               </div>
+           </div>
+   </div>
+<script>
+    function getCSRFToken() {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    if (cookie.substring(0, 10) === ('csrftoken' + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(10));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+             var csrftoken = getCSRFToken()
+
+            function csrfSafeMethod(method) {
+                // these HTTP methods do not require CSRF protection
+                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+            }
+            $(document).on('click', '#save', function (e){
+                var all_tires = document.getElementsByName('tire')
+                for (var i = 1, len = all_tires.length; i < len; i++) {
+                    $.ajaxSetup({
+                        beforeSend: function (xhr, settings) {
+                                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                        }
+                    });
+                    $.ajax({
+                        type: 'POST',
+                        url: {% url 'mt' %},
+                        data: {
+                            'tire':all_tires[i].value,
+                            'car': document.getElementById('mycar').value
+                        },
+                        dataType: 'text',
+                        success: function (res, status) {
+                            alert('Tires Added');
+
+                        },
+                        error: function (res) {
+                            alert('Please Select Valid Plate And Tire');
+                        }
+                        });
+                    }
+            });
+</script>
+<script>
+    $(document).ready(function (){
+       document.getElementById("add").onclick = function () {
+           if (document.getElementsByClassName("col-lg-2").length < 4){
+               $("p").append($('#rw'));
+           }else{
+               alert('Could Not Add More Than 4 Tires');
+           }
+       };
+       $('#rw').delegate("#delete", "click", function (){
+           if (document.getElementsByClassName("col-lg-2").length === 1){
+               alert('Please Try To Add Tire');
+           }else{
+               $(this).closest(".form-group").remove();
+           }
+       });
+    });
+</script>

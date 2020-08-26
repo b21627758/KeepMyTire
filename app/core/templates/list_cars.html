@@ -85,6 +85,8 @@
       </th>
       <th class="th-sm"  style="text-align: center">Color
       </th>
+         <th class="th-sm"  style="text-align: center">Tires
+      </th>
         {% if user.is_staff %}
          <th class="th-sm"  style="text-align: center">Actions
       </th>
@@ -92,13 +94,48 @@
     </tr>
   </thead>
   <tbody>
+  {% if not failure %}
   {% for customer in context %}
     <tr>
       <td  style="text-align: center">{{ customer.plate }}</td>
       <td  style="text-align: center">{{ customer.brand }}</td>
       <td  style="text-align: center">{{ customer.model }}</td>
-      <td  style="text-align: center; background-color: {{ customer.color }}; border-radius: 100px; width: 10px; color: #3df5ff" >COLOR
-      </td>
+      <td  style="text-align: center; background-color: {{ customer.color }}; border-radius: 100px; width: 10px; color: #3df5ff" >COLOR</td>
+      {% if tires %}
+            <td class = "select" style="text-align: center">
+        <select>
+            {% for key, value in tires.items %}
+                {% if key == customer.id %}
+                    {% for tire in value %}
+                         <option value={{ tire.pk }}>Brand/Model: {{ tire.brand }}/{{ tire.model }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Usage:
+                               {% if tire.usage == 0 %}
+                                   Summer
+                               {% elif tire.usage == 1 %}
+                                   Winter
+                               {% elif tire.usage == 2 %}
+                                   Snow
+                               {% elif tire.usage == 3 %}
+                                   Multipurpose
+                               {% endif %}
+                               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Position:
+                               {% if tire.position == 0 %}
+                                   Front Right
+                                {% elif tire.position == 1 %}
+                                   Front Left
+                                {% elif tire.position == 2 %}
+                                   Back Right
+                                {% elif tire.position == 3 %}
+                                   Back Left
+                                {% endif %}
+                           </option>
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+        </select>
+        </td>
+          {% else %}
+                <td  style="text-align: center">No Record</td>
+        {% endif %}
         {% if user.is_staff  %}
             <td style="text-align: center">
                 <a class="delete" title="Delete" data-toggle="tooltip"><i class="far fa-trash-alt fa-2x"></i></a>
@@ -106,6 +143,24 @@
         {% endif %}
     </tr>
   {% endfor %}
+      {% else %}
+       <div class="alert" style=
+            " padding: 20px;
+              background-color: #ff6412;
+              color: white;"
+    >
+      <span class="closebtn" style=
+              "margin-left: 15px;
+              color: white;
+              font-weight: bold;
+              float: right;
+              font-size: 22px;
+              line-height: 20px;
+              cursor: pointer;
+              transition: 0.3s;"
+            onclick="this.parentElement.style.display='none';">&times;</span>
+      <strong>Sorry!</strong> Could Not Found Any Car
+  {% endif %}
   </tbody>
   <tfoot>
     <tr>
@@ -121,6 +176,8 @@
          <th class="th-sm"  style="text-align: center">Actions
       </th>
         {% endif %}
+     <th class="th-sm"  style="text-align: center">Tires
+      </th>
     </tr>
   {{ errors }}
   </tfoot>

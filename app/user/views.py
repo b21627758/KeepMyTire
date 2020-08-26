@@ -228,6 +228,11 @@ class StaffReservationView(View):
     def get(self, request, *args, **kwargs):
         """Show waiting reservations"""
         reservations = models.Reservation.objects.filter(staff=request.user, status=0)
+        for i in reservations:
+            if i.date < datetime.today().date() or (i.date == datetime.today() and i.time < datetime.now().time()):
+                i.status = 3
+                i.save()
+                reservations.exclude(i)
         return render(request, self.template_name, {'reservations': reservations})
 
     @method_decorator(login_required)
@@ -247,7 +252,10 @@ class CustomerOwnedTireView(View):
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         tires = models.Tire.objects.filter(owner=request.user)
-        return render(request, self.template_name, {'context': tires})
+        if tires.exists():
+            return render(request, self.template_name, {'context': tires})
+        else:
+            return render(request, self.template_name, {'failure': True})
 
 
 class CustomerReservationView(View):
@@ -277,4 +285,12 @@ class CustomerOwnedCarView(View):
     def get(self, request, *args, **kwargs):
         """List cars"""
         cars = models.Car.objects.filter(owner=request.user)
-        return render(request, self.template_name, {'context': cars})
+        tires = {}
+        if cars.exists():
+            for i in cars:
+                tires[int(i.id)] = []
+                for j in models.TireOnCar.objects.filter(car_id=i.id):
+                    tires[int(i.id)].append(models.Tire.objects.get(id=j.tire.id))
+            return render(request, self.template_name, {'context': cars, 'tires': tires})
+        else:
+            return render(request, self.template_name, {'failure': True})

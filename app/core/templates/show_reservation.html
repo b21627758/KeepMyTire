@@ -31,7 +31,13 @@
      <div class="card" id="full-card" style="border: solid #ffffff;display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 10px;">
         {% for rez in reservations %}
         <div class="w3-container w3-center bg-dark" style="border-radius: 100px">
-          <h3 style="color: #FFFFFF">{{ rez.customer }}</h3>
+        {% if user.is_staff %}
+          <h3 style="color: #FFFFFF"><a href="{% url 'customer-detail' %}?pg={{ rez.customer.id }}"><div>Customer: {{ rez.customer.first_name}}</div>
+              <div>{{rez.customer.last_name }}</div></a></h3>
+        {% else %}
+             <h3 style="color: #FFFFFF"><div>Staff: {{ rez.staff.first_name}}</div>
+              <div>{{rez.staff.last_name }}</div></h3>
+        {% endif %}
             <h2 style="color: #FFFFFF">{{ rez.date.isoformat }}  {{ rez.time }}</h2>
           <h5 style="color: #FFFFFF">Operation:
               {% if rez.process == 0 %}

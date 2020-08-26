@@ -37,29 +37,42 @@ class MakeReservationView(View):
     def get(self, request, *args, **kwargs):
         staffs = get_user_model().objects.filter(is_staff=True,
                                                  is_superuser=False)  # first get staff then select reservation to this staff
-        records = {}
-        for staff in staffs:
-            record = Reservation.objects.filter(date__lte=date.today() + timedelta(days=7), date__gte=date.today(),
-                                                staff=staff).values('date')
-            records[str(staff.email)] = record
-        return render(request, self.template_name, {'disabled_dates': records})
+
+        return render(request, self.template_name, {'staffs': staffs})
 
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
-            if Reservation.objects.filter(date=form.cleaned_data['date']).exists():
-                for i in Reservation.objects.filter(date=form.cleaned_data['date']):
+            staffs = get_user_model().objects.filter(is_staff=True,
+                                                     is_superuser=False)  # first get staff then select reservation to this staff
+            if Reservation.objects.filter(date=form.cleaned_data['date'],
+                                          staff__email=form.cleaned_data['staff']).exists():
+                for i in Reservation.objects.filter(date=form.cleaned_data['date'],
+                                                    staff__email=form.cleaned_data['staff']):
                     if i.time == form.cleaned_data['time']:
                         return render(request, self.template_name, {'error': 'Selected Day-Time is Full',
                                                                     'focus_date': form.cleaned_data['date'],
-                                                                    'focus_time': form.cleaned_data['time']})
-            reservation = form.save(commit=False)
-            reservation.customer = request.user
-            reservation.status = 0
-            reservation.staff = get_user_model().objects.get(email=form.cleaned_data['staff'])
-            reservation.save()
-            return render(request, self.template_name, {'form': form, 'success': 'true'})
+                                                                    'focus_time': form.cleaned_data['time'],
+                                                                    'staffs': staffs})
+            elif form.cleaned_data['date'] < datetime.today().date():
+                return render(request, self.template_name, {'error': 'Out of work time',
+                                                            'focus_date': form.cleaned_data['date'],
+                                                            'focus_time': form.cleaned_data['time'],
+                                                            'staffs': staffs})
+            elif form.cleaned_data['date'] == datetime.today().date():
+                if form.cleaned_data['time'] <= datetime.now().time():
+                    return render(request, self.template_name, {'error': 'Selected Time Passed',
+                                                                'focus_date': form.cleaned_data['date'],
+                                                                'focus_time': form.cleaned_data['time'],
+                                                                'staffs': staffs})
+            else:
+                reservation = form.save(commit=False)
+                reservation.customer = request.user
+                reservation.status = 0
+                reservation.staff = get_user_model().objects.get(email=form.cleaned_data['staff'])
+                reservation.save()
+                return redirect('list-my-rez')
         return render(request, self.template_name, {'form': form, 'success': ''})
 
 
@@ -73,8 +86,12 @@ class ConditionReportView(View):
     def get(self, request, *args, **kwargs):
         """Send Condition Report Form"""
         rez = Reservation.objects.get(id=request.GET.get('context', None))
+        customer = rez.customer
         tires = Tire.objects.filter(owner_id=rez.customer_id)
-        return render(request, self.template_name, {'tires': tires})
+        move = False
+        if rez.process == 0 or rez.process == 1:
+            move = True
+        return render(request, self.template_name, {'tires': tires, 'move': move, 'customer': customer.id})
 
     def post(self, request, *args, **kwargs):
         """Keep Condition Reports"""
@@ -97,7 +114,7 @@ class LastReportView(View):
 
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
-        condition_report = self.model.objects.filter(tire_id=request.GET['pg']).order_by('date', 'time').first()
+        condition_report = self.model.objects.filter(tire_id=request.GET['pg']).order_by('-date').first()
         try:
             rp = get_user_model().objects.get(id=condition_report.reporter.id)
         except:

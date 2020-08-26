@@ -49,7 +49,12 @@ class CustomerCarListView(View):
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         cars = models.Car.objects.filter(owner__id=request.GET['pg'])
-        return render(request, self.template_name, {'context': cars})
+        tires = {}
+        for i in cars:
+            tires[int(i.id)] = []
+            for j in models.TireOnCar.objects.filter(car_id=i.id):
+                tires[int(i.id)].append(models.Tire.objects.get(id=j.tire.id))
+        return render(request, self.template_name, {'context': cars, 'tires': tires})
 
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):

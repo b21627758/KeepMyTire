@@ -14,6 +14,14 @@
                 </button>
             </div>
         {% endif %}
+       {% if error %}
+            <div class="alert alert-warning" role="alert">
+                {{ error }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endif %}
         <div class="card-header">
             <h4 class="mb-0">User Information</h4>
         </div>
@@ -25,8 +33,8 @@
                     <div class="col-lg-9">
                         <select id="process_option" name="staff" id="email" onchange="get_custom(this)" class="form-control" size="0" >
                             <option value="">Select Staff</option>
-                            {% for staff in disabled_dates.keys %}
-                                <option value={{ staff }}>{{ staff }}</option>
+                            {% for staff in staffs %}
+                                <option value={{ staff.email }}>{{ staff.first_name }} {{ staff.last_name }}</option>
                             {% endfor %}
                         </select>
                     </div>

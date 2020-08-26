@@ -46,6 +46,7 @@
     </tr>
   </thead>
   <tbody>
+  {% if not failure %}
   {% for tire in context %}
     <tr>
       <td  style="text-align: center">{{ tire.brand }}</td>
@@ -103,6 +104,25 @@
         </td>
     </tr>
   {% endfor %}
+  {% else %}
+    <div class="alert" style=
+            " padding: 20px;
+              background-color: #ff6412;
+              color: white;"
+    >
+      <span class="closebtn" style=
+              "margin-left: 15px;
+              color: white;
+              font-weight: bold;
+              float: right;
+              font-size: 22px;
+              line-height: 20px;
+              cursor: pointer;
+              transition: 0.3s;"
+            onclick="this.parentElement.style.display='none';">&times;</span>
+      <strong>Sorry!</strong> Could Not Found Any Tire
+    </div>
+  {% endif %}
   </tbody>
   <tfoot>
     <tr>
@@ -123,4 +143,5 @@
   </tfoot>
   {{ messages.success }}
 </table>
+
 {% endblock body %}

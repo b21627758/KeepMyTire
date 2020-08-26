@@ -64,6 +64,8 @@ class Tire(models.Model):
 
 class TireOnCar(models.Model):
     """Intermediate entity between tire and car"""
+    class Meta:
+        unique_together = (('car', 'tire', 'staff'),)
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
     tire = models.ForeignKey(Tire, on_delete=models.CASCADE)
     staff = models.ForeignKey(User, on_delete=models.CASCADE)
