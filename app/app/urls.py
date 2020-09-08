@@ -30,6 +30,7 @@ urlpatterns = [
     path('list-customer-tires/', tire_views.ListTireView.as_view(), name='list-customer-tires'),
     path('create-tire/', tire_views.CreateTireView.as_view(), name='create-tire'),
     path('', views.index, name='index'),
+    path('about/', views.about, name='about'),
     path('login/', user_views.LoginView.as_view(), name='login'),
     path('profile/', user_views.ProfileView.as_view(), name='profile'),
     path('create-staff/', user_views.CreateStaffView.as_view(), name='create-staff'),
